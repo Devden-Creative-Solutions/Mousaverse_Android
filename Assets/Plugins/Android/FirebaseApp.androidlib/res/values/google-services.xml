@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:keep="@string/firebase_database_url,@string/gcm_defaultSenderId,@string/google_storage_bucket,@string/project_id,@string/google_api_key,@string/google_crash_reporting_api_key,@string/google_app_id,@string/default_web_client_id">
+  <string name="firebase_database_url" translatable="false">https://mousaversemusic-default-rtdb.asia-southeast1.firebasedatabase.app</string>
+  <string name="gcm_defaultSenderId" translatable="false">767461045695</string>
+  <string name="google_storage_bucket" translatable="false">mousaversemusic.appspot.com</string>
+  <string name="project_id" translatable="false">mousaversemusic</string>
+  <string name="google_api_key" translatable="false">AIzaSyDJr85_fLYHDvrqaayPz38hOJMJox719ho</string>
+  <string name="google_crash_reporting_api_key" translatable="false">AIzaSyDJr85_fLYHDvrqaayPz38hOJMJox719ho</string>
+  <string name="google_app_id" translatable="false">1:767461045695:android:11994727c68b9235e69d0a</string>
+  <string name="default_web_client_id" translatable="false">767461045695-7gbj2np4r5mu5e0fja7rntam8g37p5vi.apps.googleusercontent.com</string>
+</resources>
