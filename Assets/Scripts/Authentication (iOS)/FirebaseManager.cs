@@ -404,7 +404,7 @@ public class FirebaseManager : MonoBehaviour
 
     IEnumerator LoadYourAsyncScene()
     {
-        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(1);
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(2);
 
         // Wait until the asynchronous scene fully loads
         while (!asyncLoad.isDone)

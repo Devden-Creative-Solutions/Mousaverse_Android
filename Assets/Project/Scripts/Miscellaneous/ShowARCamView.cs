@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TensorFlowLite;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.XR.ARFoundation;
@@ -12,6 +13,7 @@ public class ShowARCamView : MonoBehaviour
 
     [SerializeField]
     RawImage camImage;
+
 
     //bool permissionGranted;
     //bool playCamTexture;
@@ -28,7 +30,7 @@ public class ShowARCamView : MonoBehaviour
     //    if (permissionWasGranted == "true")
     //    {
     //        permissionGranted = true;
-           
+
     //    }
     //    else
     //    {
@@ -42,7 +44,7 @@ public class ShowARCamView : MonoBehaviour
     //    {
     //        if (!playCamTexture)
     //        {
-               
+
     //            playCamTexture = true;
     //        }
     //    }
@@ -51,10 +53,18 @@ public class ShowARCamView : MonoBehaviour
 
     void Start()
     {
-        if (DetermineIfFaceTrackingSupported())
+        if (WebCamTexture.devices.Length == 0)
+        {
+            camImage.gameObject.SetActive(false);
             return;
+        }
 
-        camImage.gameObject.SetActive(false);
+
+
+        //if (DetermineIfFaceTrackingSupported())
+        //    return;
+
+        //camImage.gameObject.SetActive(false);
 
         //string selectedDeviceName = "";
         //WebCamDevice[] allDevices = WebCamTexture.devices;
@@ -72,6 +82,7 @@ public class ShowARCamView : MonoBehaviour
         //cameraTexture.Play();
 
     }
+
 
     public static bool DetermineIfFaceTrackingSupported()
     {

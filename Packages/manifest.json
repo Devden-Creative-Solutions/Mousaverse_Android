@@ -1,5 +1,10 @@
 {
   "dependencies": {
+    "com.cysharp.unitask": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask#2.3.1",
+    "com.github.asus4.texture-source": "0.1.1",
+    "com.github.asus4.mediapipe": "2.10.0",
+    "com.github.asus4.tflite": "2.10.0",
+    "com.github.asus4.tflite.common": "2.10.0",
     "com.unity.cinemachine": "2.6.17",
     "com.unity.device-simulator": "3.0.3-preview",
     "com.unity.ide.visualstudio": "2.0.16",
@@ -44,5 +49,20 @@
     "com.unity.modules.wind": "1.0.0",
     "com.unity.modules.xr": "1.0.0"
   },
-  "scopedRegistries": []
+  "scopedRegistries": [
+    {
+      "name": "package.openupm.com",
+      "url": "https://package.openupm.com",
+      "scopes": [
+        "com.cysharp.unitask"
+      ]
+    },
+    {
+      "name": "npm",
+      "url": "https://registry.npmjs.com",
+      "scopes": [
+        "com.github.asus4"
+      ]
+    }
+  ]
 }

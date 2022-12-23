@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Project/Scenes/IntialLoadScene.unity
+    guid: 321d38e7dc6c5459bb9c1d3fe35da232
+  - enabled: 1
     path: Assets/Project/Scenes/Login (iOS).unity
     guid: 820b0ff6a77995649b21070514342315
   - enabled: 1

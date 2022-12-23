@@ -9,18 +9,16 @@ public class BlendshapesSync : MonoBehaviourPun, IPunObservable
     [SerializeField]
     PhotonView photonView;
 
-    [SerializeField]
-    ARFaceManager arFaceManager;
 
     SkinnedMeshRenderer slothHead;
-    string slothHeadBlendPrefix = "blendShape2.";
+    string slothHeadBlendPrefix = "blendShape1.";
     int[] slothHeadBlendIndexes;
 
 
     SkinnedMeshRenderer skinnedMesh;
     [SerializeField]
     SkinnedMeshRenderer teethSkinnedMesh;
-    string[] faceBlendNames = new string[] { "jawOpen", "mouthSmileLeft", "mouthSmileRight", "mouthFunnel", "mouthPucker", "eyeBlinkLeft", "eyeBlinkRight" };
+    string[] faceBlendNames = new string[] { "MTH_SMILE1" };
 
     float[] faceBlendWeights;
     int[] faceBlendIndexes;
@@ -30,26 +28,10 @@ public class BlendshapesSync : MonoBehaviourPun, IPunObservable
     [SerializeField]
     private PlayerType currentPlayerType;
 
-    bool ArFaceManagerPresent;
 
     private void Start()
     {
-        if (photonView.IsMine)
-        {
-            currentPlayerType = PlayerInfoDontDestroy.Instance.currentPlayerType;
-
-            if (currentPlayerType == PlayerType.Singer)
-            {
-                arFaceManager = FindObjectOfType<ARFaceManager>();
-                if (arFaceManager != null)
-                {
-                    arFaceManager.facesChanged += ArFaceManager_facesChanged;
-                    slothHeadBlendIndexes = new int[faceBlendNames.Length];
-                }
-                else
-                    ArFaceManagerPresent = false;
-            }
-        }
+        
 
         faceBlendWeights = new float[faceBlendNames.Length];
         faceBlendIndexes = new int[faceBlendNames.Length];
@@ -61,29 +43,31 @@ public class BlendshapesSync : MonoBehaviourPun, IPunObservable
 
         for (int i = 0; i < faceBlendIndexes.Length; i++)
         {
-            faceBlendIndexes[i] = skinnedMesh.sharedMesh.GetBlendShapeIndex(faceBlendNames[i]);
+            faceBlendIndexes[i] = skinnedMesh.sharedMesh.GetBlendShapeIndex("jawOpen");
+        }
+
+        if (photonView.IsMine)
+        {
+            currentPlayerType = PlayerInfoDontDestroy.Instance.currentPlayerType;
+
+            if (currentPlayerType == PlayerType.Singer)
+            {
+
+                slothHeadBlendIndexes = new int[faceBlendNames.Length];
+                ArFaceManager_facesChanged();
+            }
         }
 
     }
 
-    void OnDestroy()
-    {
-        if (!ArFaceManagerPresent)
-            return;
 
-        if (photonView.IsMine && currentPlayerType == PlayerType.Singer)
-            arFaceManager.facesChanged -= ArFaceManager_facesChanged;
-    }
-
-    private void ArFaceManager_facesChanged(ARFacesChangedEventArgs obj)
+    private void ArFaceManager_facesChanged()
     {
         if (!photonView.IsMine || currentPlayerType != PlayerType.Singer)
             return;
 
-        Debug.Log("Added : " + obj.added.Count + "  Updated : " + obj.updated.Count + "  Removed : " + obj.removed.Count);
-        Debug.Log("obj name : " + obj.updated[obj.updated.Count - 1].transform.name);
 
-        slothHead = obj.updated[obj.updated.Count - 1].transform.GetChild(1).GetComponent<SkinnedMeshRenderer>();
+        slothHead = GameObject.Find("MTH_DEF").GetComponent<SkinnedMeshRenderer>();
 
         if (!isSlothHeadIndexesFilled && slothHead)
         {
@@ -91,12 +75,12 @@ public class BlendshapesSync : MonoBehaviourPun, IPunObservable
             {
                 var slothHeadFormat = slothHeadBlendPrefix + faceBlendNames[i];
 
-                if (slothHeadFormat.Contains("Left"))
-                    slothHeadFormat = slothHeadFormat.Replace("Left", "_L");
-                else if (slothHeadFormat.Contains("Right"))
-                    slothHeadFormat = slothHeadFormat.Replace("Right", "_R");
+                //if (slothHeadFormat.Contains("Left"))
+                //    slothHeadFormat = slothHeadFormat.Replace("Left", "_L");
+                //else if (slothHeadFormat.Contains("Right"))
+                //    slothHeadFormat = slothHeadFormat.Replace("Right", "_R");
 
-                Debug.Log("sloth Head Blend Names " + i + " : " + slothHeadFormat);
+                //Debug.Log("sloth Head Blend Names " + i + " : " + slothHeadFormat);
 
                 slothHeadBlendIndexes[i] = slothHead.sharedMesh.GetBlendShapeIndex(slothHeadFormat);
             }
@@ -126,14 +110,19 @@ public class BlendshapesSync : MonoBehaviourPun, IPunObservable
 
         if (stream.IsWriting)
         {
-            if (ArFaceManagerPresent && skinnedMesh)
+            if (skinnedMesh)
             {
                 if (slothHead && currentPlayerType == PlayerType.Singer)
                 {
                     for (int i = 0; i < faceBlendIndexes.Length; i++)
                     {
                         //var weight = skinnedMesh.GetBlendShapeWeight(faceBlendIndexes[i]);
-                        var weight = slothHead.GetBlendShapeWeight(slothHeadBlendIndexes[i]);
+                        var weight = slothHead.GetBlendShapeWeight(slothHeadBlendIndexes[i])-20;
+
+                        if (weight < 0)
+                            weight = 0;
+                        if (weight > 100)
+                            weight = 100;
 
                         skinnedMesh.SetBlendShapeWeight(faceBlendIndexes[i], weight);
 
