@@ -12,6 +12,7 @@ using System.Globalization;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Networking;
+using Firebase.Database;
 
 public class AudioController : MonoBehaviour
 {
@@ -51,42 +52,82 @@ public class AudioController : MonoBehaviour
     string currentAudioUrl;
     string currentAudioScheduledForPlaying;
 
-    FirebaseFirestore fs;
-    ListenerRegistration listenerRegistration;
+    DatabaseReference DBreference;
+    //FirebaseFirestore fs;
+    //ListenerRegistration listenerRegistration;
 
-    
+
 
     void Start()
     {
-        fs = FirebaseFirestore.DefaultInstance;
-
+        //fs = FirebaseFirestore.DefaultInstance;
+        DBreference = FirebaseDatabase.DefaultInstance.RootReference;
         SceneChangeController.Instance.OnTeleportedTo += GetDocumentDetails;
-
+        Invoke("DelayedSubscribeToFirebase", 2);
         recorder.playOnAwake = false;
 
-        InvokeRepeating("GetDocumentDetails", 0.5f, 2.5f);
+        InvokeRepeating("GetDocumentDetails", 2.5f, 3.5f);
         //GetDocumentDetails();
-        listenerRegistration = fs.Document(audioSessionDetailsPath).Listen(snapShot =>
-        {
-            recordedAudioSessionDetails = snapShot.ConvertTo<RecordedAudioSessionDetails>();
-            DisplayData();
-        });
+        //listenerRegistration = fs.Document(audioSessionDetailsPath).Listen(snapShot =>
+        //{
+        //    recordedAudioSessionDetails = snapShot.ConvertTo<RecordedAudioSessionDetails>();
+        //    DisplayData();
+        //});
+    }
+    void DelayedSubscribeToFirebase()
+    {
+        DBreference.ValueChanged += AudioController_ValueChanged;
+    }
+
+    private void AudioController_ValueChanged(object sender, ValueChangedEventArgs e)
+    {
+
+        recordedAudioSessionDetails.audioUrl = e.Snapshot.Child("audioUrl").Value.ToString();
+        recordedAudioSessionDetails.startTime = e.Snapshot.Child("startTime").Value.ToString();
+        recordedAudioSessionDetails.startSession = bool.Parse(e.Snapshot.Child("startSession").Value.ToString());
+        DisplayData();
     }
 
     private void OnDestroy()
     {
         SceneChangeController.Instance.OnTeleportedTo -= GetDocumentDetails;
+        DBreference.ValueChanged -= AudioController_ValueChanged;
     }
 
     void GetDocumentDetails()
     {
-        fs.Collection("audioSessionDetail").Document("detail").GetSnapshotAsync().ContinueWithOnMainThread(task =>
-        {
-            recordedAudioSessionDetails = task.Result.ConvertTo<RecordedAudioSessionDetails>();
-            DisplayData();
-        });
+        StartCoroutine(GetRecordedSessionDetails());
+
+        //fs.Collection("audioSessionDetail").Document("detail").GetSnapshotAsync().ContinueWithOnMainThread(task =>
+        //{
+        //    recordedAudioSessionDetails = task.Result.ConvertTo<RecordedAudioSessionDetails>();
+        //    DisplayData();
+        //});
     }
 
+    IEnumerator GetRecordedSessionDetails()
+    {
+        var DBTask = DBreference.GetValueAsync();
+
+        yield return new WaitUntil(predicate: () => DBTask.IsCompleted);
+
+        if (DBTask.Exception != null)
+        {
+            Debug.LogError(message: $"Failed to register Task with {DBTask.Exception}");
+        }
+        else
+        {
+            DataSnapshot snapshot = DBTask.Result;
+
+            if (snapshot.Value != null)
+            {
+                recordedAudioSessionDetails.audioUrl = snapshot.Child("audioUrl").Value.ToString();
+                recordedAudioSessionDetails.startTime = snapshot.Child("startTime").Value.ToString();
+                recordedAudioSessionDetails.startSession = bool.Parse(snapshot.Child("startSession").Value.ToString());
+                DisplayData();
+            }
+        }
+    }
 
     void DisplayData()
     {

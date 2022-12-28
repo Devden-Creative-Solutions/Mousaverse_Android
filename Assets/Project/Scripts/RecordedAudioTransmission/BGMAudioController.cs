@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Firebase.Database;
 using Firebase.Extensions;
 using Firebase.Firestore;
 using UnityEngine;
@@ -19,40 +20,80 @@ public class BGMAudioController : MonoBehaviour
     string currentAudioUrl;
     string currentAudioScheduledForPlaying;
 
-    FirebaseFirestore fs;
-    ListenerRegistration listenerRegistration;
+    //FirebaseFirestore fs;
+    //ListenerRegistration listenerRegistration;
+    DatabaseReference DBreference;
 
 
     // Start is called before the first frame update
     void Start()
     {
-        fs = FirebaseFirestore.DefaultInstance;
-
+        //fs = FirebaseFirestore.DefaultInstance;
+        DBreference = FirebaseDatabase.DefaultInstance.RootReference;
         SceneChangeController.Instance.OnTeleportedTo += GetDocumentDetails;
-
+        Invoke("DelayedSubscribeToFirebase", 2);
         recorder.playOnAwake = false;
 
-        InvokeRepeating("GetDocumentDetails", 0.5f, 2.5f);
+        InvokeRepeating("GetDocumentDetails", 2.5f, 3.5f);
         //GetDocumentDetails();
-        listenerRegistration = fs.Document(audioSessionDetailsPath).Listen(snapShot =>
-        {
-            recordedAudioSessionDetails = snapShot.ConvertTo<RecordedAudioSessionDetails>();
-            DisplayData();
-        });
+        //listenerRegistration = fs.Document(audioSessionDetailsPath).Listen(snapShot =>
+        //{
+        //    recordedAudioSessionDetails = snapShot.ConvertTo<RecordedAudioSessionDetails>();
+        //    DisplayData();
+        //});
+    }
+
+    void DelayedSubscribeToFirebase()
+    {
+        DBreference.ValueChanged += BGMAudioController_ValueChanged;
+    }
+
+    private void BGMAudioController_ValueChanged(object sender, ValueChangedEventArgs e)
+    {
+
+        recordedAudioSessionDetails.bgmUrl = e.Snapshot.Child("bgmUrl").Value.ToString();
+        recordedAudioSessionDetails.playBGM = bool.Parse(e.Snapshot.Child("playBGM").Value.ToString());
+        DisplayData();
     }
 
     private void OnDestroy()
     {
         SceneChangeController.Instance.OnTeleportedTo -= GetDocumentDetails;
+        DBreference.ValueChanged -= BGMAudioController_ValueChanged;
     }
 
     void GetDocumentDetails()
     {
-        fs.Collection("audioSessionDetail").Document("detail").GetSnapshotAsync().ContinueWithOnMainThread(task =>
+        StartCoroutine(GetRecordedSessionDetails());
+
+        //fs.Collection("audioSessionDetail").Document("detail").GetSnapshotAsync().ContinueWithOnMainThread(task =>
+        //{
+        //    recordedAudioSessionDetails = task.Result.ConvertTo<RecordedAudioSessionDetails>();
+        //    DisplayData();
+        //});
+    }
+
+    IEnumerator GetRecordedSessionDetails()
+    {
+        var DBTask = DBreference.GetValueAsync();
+
+        yield return new WaitUntil(predicate: () => DBTask.IsCompleted);
+
+        if (DBTask.Exception != null)
         {
-            recordedAudioSessionDetails = task.Result.ConvertTo<RecordedAudioSessionDetails>();
-            DisplayData();
-        });
+            Debug.LogError(message: $"Failed to register Task with {DBTask.Exception}");
+        }
+        else
+        {
+            DataSnapshot snapshot = DBTask.Result;
+
+            if (snapshot.Value != null)
+            {
+                recordedAudioSessionDetails.bgmUrl = snapshot.Child("bgmUrl").Value.ToString();
+                recordedAudioSessionDetails.playBGM = bool.Parse(snapshot.Child("playBGM").Value.ToString());
+                DisplayData();
+            }
+        }
     }
 
     void DisplayData()
