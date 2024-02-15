@@ -1,41 +1,41 @@
 {
   "project_info": {
-    "project_number": "767461045695",
-    "firebase_url": "https://mousaversemusic-default-rtdb.asia-southeast1.firebasedatabase.app",
-    "project_id": "mousaversemusic",
-    "storage_bucket": "mousaversemusic.appspot.com"
+    "project_number": "1075988675512",
+    "firebase_url": "https://musicconcert-876c3-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "musicconcert-876c3",
+    "storage_bucket": "musicconcert-876c3.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:767461045695:android:11994727c68b9235e69d0a",
+        "mobilesdk_app_id": "1:1075988675512:android:1bc1eed92272168522ad4d",
         "android_client_info": {
-          "package_name": "com.Sum.Mousaverse"
+          "package_name": "com.Devden.MusicConcert"
         }
       },
       "oauth_client": [
         {
-          "client_id": "767461045695-7gbj2np4r5mu5e0fja7rntam8g37p5vi.apps.googleusercontent.com",
+          "client_id": "1075988675512-q446uq1rn9gdk3r8vl7mjrcq1bs7v904.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDJr85_fLYHDvrqaayPz38hOJMJox719ho"
+          "current_key": "AIzaSyDVZrRqb88Ba2OGQNSQ9IJRQpE9E1VunR8"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "767461045695-7gbj2np4r5mu5e0fja7rntam8g37p5vi.apps.googleusercontent.com",
+              "client_id": "1075988675512-q446uq1rn9gdk3r8vl7mjrcq1bs7v904.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "767461045695-dv4d42adn0artojhnnp2u2dur2g3uh8g.apps.googleusercontent.com",
+              "client_id": "1075988675512-afvneqkan6h6akt344penfmc1nue4kv1.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.Sum.Mousaverse"
+                "bundle_id": "com.Devden.MusicConcert"
               }
             }
           ]
