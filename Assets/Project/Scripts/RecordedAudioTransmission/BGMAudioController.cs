@@ -34,7 +34,9 @@ public class BGMAudioController : MonoBehaviour
         Invoke("DelayedSubscribeToFirebase", 2);
         recorder.playOnAwake = false;
 
-        InvokeRepeating("GetDocumentDetails", 2.5f, 3.5f);
+        //InvokeRepeating("GetDocumentDetails", 2.5f, 3.5f);
+       // DelayedSubscribeToFirebase();
+       // DBreference.ValueChanged += GetDocumentDetails;
         //GetDocumentDetails();
         //listenerRegistration = fs.Document(audioSessionDetailsPath).Listen(snapShot =>
         //{
