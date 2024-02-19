@@ -66,7 +66,7 @@ public class AudioController : MonoBehaviour
         Invoke("DelayedSubscribeToFirebase", 2);
         recorder.playOnAwake = false;
 
-        InvokeRepeating("GetDocumentDetails", 2.5f, 3.5f);
+      //  InvokeRepeating("GetDocumentDetails", 2.5f, 3.5f);
         //GetDocumentDetails();
         //listenerRegistration = fs.Document(audioSessionDetailsPath).Listen(snapShot =>
         //{

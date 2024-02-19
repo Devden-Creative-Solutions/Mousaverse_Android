@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
+#if PLATFORM_ANDROID
+using UnityEngine.Android;
+#endif
 public class UIManager : GenericSingletonClass<UIManager>
 {
     public LeanToggle[] screens;
@@ -20,6 +23,13 @@ public class UIManager : GenericSingletonClass<UIManager>
 
     private void Start()
     {
+#if PLATFORM_ANDROID
+        if (!Permission.HasUserAuthorizedPermission(Permission.Camera))
+        {
+            Permission.RequestUserPermission(Permission.Camera);
+          
+        }
+#endif
         Debug.unityLogger.logEnabled = true;
 
         screensDict = new Dictionary<string, LeanToggle>();

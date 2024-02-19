@@ -59,7 +59,7 @@ public class ShowARCamView : MonoBehaviour
             return;
         }
 
-
+        Debug.Log("fff");
 
         //if (DetermineIfFaceTrackingSupported())
         //    return;
