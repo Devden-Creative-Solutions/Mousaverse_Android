@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
+using System;
+using static CharacterAnimator;
 
 public class NetworkPlayerSpawner : MonoBehaviourPunCallbacks
 {
@@ -14,7 +16,7 @@ public class NetworkPlayerSpawner : MonoBehaviourPunCallbacks
 
     [SerializeField] GetRoomList getRoomList;
 
-
+    CharacterAnimator characterAnim;
 
     public override void OnJoinedRoom()
     {
@@ -48,8 +50,10 @@ public class NetworkPlayerSpawner : MonoBehaviourPunCallbacks
     void SpawnPlayer(string NetworkPlayerName)
     {
         spawnedPlayerPrefab = PhotonNetwork.Instantiate("NetworkAvatars\\" + NetworkPlayerName,
-        new Vector3(transform.position.x + Random.Range(0, 5), transform.position.y, transform.position.z), transform.rotation);
+        new Vector3(transform.position.x + UnityEngine.Random.Range(0, 5), transform.position.y, transform.position.z), transform.rotation);
+        characterAnim = spawnedPlayerPrefab.GetComponentInChildren<CharacterAnimator>();
 
+           
 
 
         Player networkPlayer = PhotonNetwork.LocalPlayer;
@@ -67,6 +71,28 @@ public class NetworkPlayerSpawner : MonoBehaviourPunCallbacks
         minimapComp.enabled = true;
 
     }
+
+
+    public void playemote(int I)
+    {
+      switch (I)
+        {
+            case 0: characterAnim.SelectAndPlayGreetings(GreetingStyle.Salute);
+                break;
+            case 1: characterAnim.SelectAndPlayGreetings(GreetingStyle.Hi);
+                break;
+            case 2: characterAnim.SelectAndPlayGreetings(GreetingStyle.ShakeHands);
+                break;
+            case 3: characterAnim.SelectAndPlayGreetings(GreetingStyle.BreakDance);
+                break;
+            default:
+                characterAnim.SelectAndPlayGreetings(GreetingStyle.Hi);
+                break;
+        }
+    }
+
+
+
 
     public override void OnLeftRoom()
     {
